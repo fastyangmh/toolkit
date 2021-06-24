@@ -19,7 +19,7 @@ def pytorch_mnist_to_png(data_path):
         num_data = len(data)
         for idx in range(num_data):
             plt.imsave(join(target_path, '{}_{}.png'.format(str(idx).zfill(
-                len(str(num_data))), label[idx])), arr=data[idx], cmap='gray', format='png')Ｆ
+                len(str(num_data))), label[idx])), arr=data[idx], cmap='gray', format='png')
 
 
 if __name__ == '__main__':
