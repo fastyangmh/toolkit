@@ -11,7 +11,7 @@ def get_roi_edges_image(filepath):
     image = cv2.imread(filepath, 0)
 
     # get roi
-    mask = cv2.inRange(image, 20, 200)
+    mask = cv2.inRange(image, 20, 200)  # find black background
     distance = cv2.distanceTransform(mask, cv2.DIST_L2, 5, cv2.CV_32F)
     maxdist = 0
     for i in range(distance.shape[0]):
@@ -24,8 +24,6 @@ def get_roi_edges_image(filepath):
     half_slide = maxdist * np.cos(np.pi / 4)
     (left, right, top, bottom) = ((x - half_slide),
                                   (x + half_slide), (y - half_slide), (y + half_slide))
-    p1 = (int(left), int(top))
-    p2 = (int(right), int(bottom))
     image = image[int(top):int(bottom), int(left):int(right)]
 
     # find edges sobel
