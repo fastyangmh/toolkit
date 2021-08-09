@@ -9,34 +9,44 @@ from ctypes import c_uint, c_wchar_p
 import numpy as np
 import matplotlib.pyplot as plt
 from os.path import isfile
+import cv2
 
 # class
 
 
 class IDSCAMERA:
     def __init__(self, camera_parameter_path):
+        # table
+        self.color_modes_table = {'6': 'ueye.IS_CM_MONO8',
+                                  '0': 'ueye.IS_CM_BGRA8_PACKED',
+                                  '1': 'ueye.IS_CM_BGR8_PACKED'}
+        self.bits_of_pixel_table = {'6': 8,
+                                    '0': 32,
+                                    '1': 24}
+        self.color_code_table = {'BGR': cv2.COLOR_BGR2RGB,
+                                 'BGRA': cv2.COLOR_BGRA2RGB}
+
         # parameters
-        self.color_mode = {'6': 'ueye.IS_CM_MONO8',
-                           '0': 'ueye.IS_CM_BGRA8_PACKED'}
-        self.bits_of_pixel = {'6': 8,
-                              '0': 32}
         self.config = self._load_ini_file(
             camera_parameter_path=camera_parameter_path)
         self.width = int(self.config['Image size']['Width'])
         self.height = int(self.config['Image size']['Height'])
-        self.bitspixel = self.bits_of_pixel[self.config['Parameters']['Colormode']]
+        self.bitspixel = self.bits_of_pixel_table[self.config['Parameters']['Colormode']]
         self.lineinc = self.width * int((self.bitspixel + 7) / 8)
         self.channels = int(np.ceil((self.bitspixel/8)))
+        self.color_mode = self.color_modes_table[self.config['Parameters']['Colormode']]
+        self.color_order = ''.join(filter(lambda x: not x.isdigit(
+        ), self.color_mode.split('IS_CM_')[1].split('_')[0]))
+        self.color_code = self.color_code_table.get(self.color_order)
 
         # init camera
         self.camera = ueye.HIDS(0)
-        result = ueye.is_InitCamera(
-            phCam=self.camera, hWnd=None)
+        result = ueye.is_InitCamera(phCam=self.camera, hWnd=None)
         self._check(result=result, info='initial')
 
         # set color mode
-        result = ueye.is_SetColorMode(hCam=self.camera, Mode=eval(
-            self.color_mode[self.config['Parameters']['Colormode']]))
+        result = ueye.is_SetColorMode(
+            hCam=self.camera, Mode=eval(self.color_mode))
         self._check(result=result, info='set color mode')
 
         # load parameter
@@ -56,8 +66,12 @@ class IDSCAMERA:
             hCam=self.camera, pcMem=self.mem_ptr, id=mem_id)
         self._check(result=result, info='set active memory region')
 
-    def _load_ini_file(self, camera_parameter_path):
+        # set DIB
+        result = ueye.is_SetDisplayMode(
+            hCam=self.camera, Mode=ueye.IS_SET_DM_DIB)
+        self._check(result=result, info='set DIB')
 
+    def _load_ini_file(self, camera_parameter_path):
         config = configparser.ConfigParser()
         config.read(camera_parameter_path, 'utf-8-sig')
         return config
@@ -67,13 +81,15 @@ class IDSCAMERA:
             info, result)
 
     def __call__(self):
-        result = ueye.is_FreezeVideo(hCam=self.camera, Wait=ueye.IS_DONT_WAIT)
+        result = ueye.is_FreezeVideo(hCam=self.camera, Wait=ueye.IS_WAIT)
         self._check(result=result, info='freeze video')
         image = ueye.get_data(image_mem=self.mem_ptr, x=self.width, y=self.height,
                               bits=self.bitspixel, pitch=self.lineinc, copy=False)
         if self.channels > 1:
             image = np.reshape(a=image, newshape=(
                 self.height, self.width, self.channels))
+            image = cv2.cvtColor(src=image, code=self.color_code)
+            image = np.array(image)
         else:
             image = np.reshape(a=image, newshape=(self.height, self.width))
         return image
@@ -85,7 +101,7 @@ class IDSCAMERA:
 
 if __name__ == '__main__':
     # parameters
-    camera_parameter_path = 'parameters.ini'
+    camera_parameter_path = 'parameters_RGB24.ini'
 
     # check camera parameter file
     assert isfile(
