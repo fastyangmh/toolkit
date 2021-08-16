@@ -14,7 +14,7 @@ import cv2
 # class
 
 
-class IDSCAMERA:
+class IDSCamera:
     def __init__(self, camera_parameter_path):
         # table
         self.color_modes_table = {'6': 'ueye.IS_CM_MONO8',
@@ -101,14 +101,14 @@ class IDSCAMERA:
 
 if __name__ == '__main__':
     # parameters
-    camera_parameter_path = 'parameters_RGB24.ini'
+    camera_parameter_path = 'parameters.ini'
 
     # check camera parameter file
     assert isfile(
         path=camera_parameter_path), 'the camera parameters does not exist.'
 
     # initialize camera
-    camera = IDSCAMERA(camera_parameter_path=camera_parameter_path)
+    camera = IDSCamera(camera_parameter_path=camera_parameter_path)
 
     # get image
     image = camera()

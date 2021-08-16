@@ -19,7 +19,7 @@ import cv2
 # class
 
 
-class IDSCAMERA:
+class IDSCamera:
     def __init__(self, camera_parameter_path):
         # table
         self.color_modes_table = {'6': 'ueye.IS_CM_MONO8',
@@ -42,7 +42,7 @@ class IDSCAMERA:
         self.color_mode = self.color_modes_table[self.config['Parameters']['Colormode']]
         self.color_order = ''.join(filter(lambda x: not x.isdigit(
         ), self.color_mode.split('IS_CM_')[1].split('_')[0]))
-        self.color_code = self.color_code_table.get(key=self.color_order)
+        self.color_code = self.color_code_table.get(self.color_order)
 
         # init camera
         self.camera = ueye.HIDS(0)
@@ -108,7 +108,7 @@ class GUI:
     def __init__(self, project_parameters):
         # parameters
         self.project_parameters = project_parameters
-        self.camera = IDSCAMERA(
+        self.camera = IDSCamera(
             camera_parameter_path=project_parameters.camera_parameter_path)
         self.folder_path = None
 
@@ -187,7 +187,7 @@ class GUI:
 if __name__ == '__main__':
     # project parameters
     project_parameters = Namespace(
-        **{'camera_parameter_path': '1223.ini'})
+        **{'camera_parameter_path': 'parameters.ini'})
 
     # check camera parameter file
     assert isfile(
