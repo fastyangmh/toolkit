@@ -19,8 +19,7 @@ def get_masked_image(image, lower, upper, color_space):
         image=mask, mode=cv2.RETR_EXTERNAL, method=cv2.CHAIN_APPROX_SIMPLE)
     cv2.drawContours(image=mask, contours=contours,
                      contourIdx=-1, color=1, thickness=-1)
-    mask = cv2.morphologyEx(src=mask, op=cv2.MORPH_CLOSE, kernel=np.ones(
-        shape=(3, 3), dtype=np.uint8), iterations=3)
+    #mask = cv2.morphologyEx(src=mask, op=cv2.MORPH_CLOSE, kernel=np.ones(shape=(3, 3), dtype=np.uint8), iterations=3)
     masked_image = cv2.bitwise_and(src1=image, src2=image, mask=mask)
     masked_image = cv2.cvtColor(src=masked_image, code=cv2.COLOR_BGR2GRAY)
     return mask, masked_image
@@ -37,7 +36,7 @@ def get_palm_image(mask, masked_image):
                 x = j
                 y = i
                 maxdist = dist
-    half_slide = maxdist  # * np.cos(np.pi / 4)
+    half_slide = 1.25*maxdist
     (left, right, top, bottom) = ((x - half_slide),
                                   (x + half_slide), (y - half_slide), (y + half_slide))
     palm_image = masked_image[int(top):int(bottom), int(left):int(right)]
@@ -45,12 +44,18 @@ def get_palm_image(mask, masked_image):
 
 
 def get_edges(image):
-    sobelX = cv2.Sobel(src=image, ddepth=cv2.CV_64F, dx=1, dy=0)
-    sobelY = cv2.Sobel(src=image, ddepth=cv2.CV_64F, dx=0, dy=1)
-    sobelX = np.uint8(np.abs(sobelX))
-    sobelY = np.uint8(np.abs(sobelY))
-    edges = cv2.bitwise_or(src1=sobelX, src2=sobelY)
-    return edges
+    image = cv2.blur(image, (5, 5))
+    image = cv2.medianBlur(image, 3)
+    image = cv2.bitwise_not(image)
+    blur = cv2.GaussianBlur(image, (5, 5), 5)
+    image = cv2.subtract(image, blur)
+    image = cv2.blur(image, (5, 5))
+    image = cv2.medianBlur(image, 3)
+    image = cv2.equalizeHist(image)
+    image = cv2.blur(image, (5, 5))
+    image = cv2.medianBlur(image, 3)
+    _, image = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    return image
 
 
 def plot_images(titles, images, cmaps, save=False):
@@ -82,8 +87,8 @@ if __name__ == '__main__':
     # parameters
     filepath = parser.filepath
     save = parser.save
-    lower = np.array([0, 140, 0], dtype=np.uint8)
-    upper = np.array([255, 200, 255], dtype=np.uint8)
+    lower = np.array([0, 130, 0], dtype=np.uint8)
+    upper = np.array([255, 150, 255], dtype=np.uint8)
     color_space = cv2.COLOR_BGR2YCrCb
 
     # load image
@@ -99,9 +104,11 @@ if __name__ == '__main__':
     # get palm edge
     palm_edge = get_edges(image=palm_image)
 
+    # thinning the edges
+    palm_edge = cv2.ximgproc.thinning(palm_edge)
+
     # plot images
-    plot_images(titles=['original image', 'mask', 'masked image', 'palm image', 'palm edge'],
-                images=[cv2.cvtColor(image, cv2.COLOR_BGR2RGB),
-                        mask, masked_image, palm_image, palm_edge],
-                cmaps=[None,  'gray', 'gray', 'gray', 'gray'],
+    plot_images(titles=['mask', 'palm image', 'palm edge'],
+                images=[mask, palm_image, palm_edge],
+                cmaps=['gray', 'gray', 'gray'],
                 save=save)
