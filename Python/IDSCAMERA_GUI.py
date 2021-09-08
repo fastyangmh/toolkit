@@ -3,11 +3,16 @@ https://cn.ids-imaging.com/manuals/ids-software-suite/ueye-manual/4.94/zh/is_cam
 '''
 
 # import
+from argparse import Namespace
 import configparser
-from pyueye import ueye
 from ctypes import c_uint, c_wchar_p
 import numpy as np
-import matplotlib.pyplot as plt
+from os.path import join
+from pyueye import ueye
+from tkinter import Tk, Button, filedialog, messagebox, Label, Text
+from datetime import datetime
+from PIL import Image, ImageTk
+import tkinter as tk
 from os.path import isfile
 import cv2
 
@@ -99,27 +104,97 @@ class IDSCamera:
         self._check(result=result, info='exit camera')
 
 
+class GUI:
+    def __init__(self, project_parameters):
+        # parameters
+        self.project_parameters = project_parameters
+        self.camera = IDSCamera(
+            camera_parameter_path=project_parameters.camera_parameter_path)
+        self.folder_path = None
+
+        # window
+        self.window = Tk()
+        self.window.geometry('{}x{}'.format(
+            self.window.winfo_screenwidth(), self.window.winfo_screenheight()))
+        self.window.title('IDS Camera GUI')
+
+        # button
+        self.load_folder_path_button = Button(
+            self.window, text='選擇影像存放位置', fg='black', bg='white', command=self._load_folder_path)
+        self.save_image_button = Button(
+            self.window, text='儲存影像', fg='black', bg='white', command=self._save_image)
+
+        # label
+        self.filename_label = Label(self.window, text='檔案名稱', fg='black')
+        self.filepath_label = Label(self.window, text='', fg='black')
+        self.real_time_image_text_label = Label(
+            self.window, text='', fg='black')
+        self.real_time_image_label = Label(self.window, text='', fg='black')
+
+        # text
+        self.filename_text = Text(self.window, height=2, width=10)
+
+    def _load_folder_path(self):
+        self.folder_path = filedialog.askdirectory(initialdir='./')
+
+    def _save_image(self):
+        if self.folder_path is None:
+            messagebox.showerror(title='錯誤', message='尚未選取影像存放位置！')
+        else:
+            filename = join('{}_{}.png'.format(self.filename_text.get(
+                '1.0', 'end-1c'), datetime.now().strftime('%Y%m%d%H%M%S%f')))
+            self.image.save(join(self.folder_path, filename))
+            self.filepath_label.config(text='檔案位置: {}'.format(
+                join(self.folder_path, filename)))
+
+    def _resize_image(self, image):
+        width, height = image.size
+        if self.window.winfo_height() == 1 or self.window.winfo_width() == 1:
+            ratio = 1
+        else:
+            ratio = max(self.window.winfo_height(),
+                        self.window.winfo_width())/max(width, height)
+        ratio *= 0.5
+        return image.resize((int(width*ratio), int(height*ratio)))
+
+    def _get_image(self):
+        self.image = Image.fromarray(self.camera())
+        self.image = self._resize_image(image=self.image)
+        imageTk = ImageTk.PhotoImage(self.image)
+        self.real_time_image_text_label.config(text='即時影像:\n')
+        self.real_time_image_label.config(image=imageTk)
+        self.real_time_image_label.image = imageTk
+        self.real_time_image_label.after(ms=1, func=self._get_image)
+
+    def __call__(self):
+        # position, 1st column
+        self.load_folder_path_button.pack(anchor=tk.NW)
+        self.filename_label.pack(anchor=tk.NW)
+        self.filename_text.pack(anchor=tk.NW)
+        self.save_image_button.pack(anchor=tk.NW)
+
+        # position, 2nd column
+        self.real_time_image_text_label.pack(anchor=tk.N)
+        self.real_time_image_label.pack(anchor=tk.N)
+        self.filepath_label.pack(anchor=tk.N)
+
+        # run
+        self._get_image()
+        self.window.mainloop()
+        self.camera.release()
+
+
 if __name__ == '__main__':
-    # parameters
-    camera_parameter_path = 'parameters.ini'
+    # project parameters
+    project_parameters = Namespace(
+        **{'camera_parameter_path': 'parameters.ini'})
 
     # check camera parameter file
     assert isfile(
-        path=camera_parameter_path), 'the camera parameters does not exist.'
+        path=project_parameters.camera_parameter_path), 'the camera parameters does not exist.'
 
-    # initialize camera
-    camera = IDSCamera(camera_parameter_path=camera_parameter_path)
+    # create GUI object
+    gui = GUI(project_parameters=project_parameters)
 
-    # get image
-    image = camera()
-
-    # display image
-    if camera.channels == 1:
-        cmap = 'gray'
-    else:
-        cmap = None
-    plt.imshow(image, cmap=cmap)
-    plt.show()
-
-    # release camera
-    camera.release()
+    # run
+    gui()

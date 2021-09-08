@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Display Webcam Stream</title>
+</head>
+
+<body>
+    <center>
+        <button id="capture button" style="width:100px;height:50px;">capture video</button>
+        <button id="takeshot button" disabled=True style="width:100px;height:50px;">takeshot</button>
+    </center>
+    <p></p>
+    <center>
+        <video autoplay="true" id="video"></video>
+    </center>
+    <p></p>
+    <center>
+        <img src="" id="img">
+        <canvas style="display:none;" id="canvas"></canvas>
+    </center>
+</body>
+
+<script>
+    const constraints = { video: true };
+    const video = document.querySelector("video");
+    const captureVideoButton = document.getElementById("capture button")
+    const screenshotButton = document.getElementById("takeshot button");
+    const img = document.querySelector("img");
+    const canvas = document.createElement("canvas");
+
+    captureVideoButton.onclick = function () {
+        navigator.mediaDevices
+            .getUserMedia(constraints)
+            .then(handleSuccess)
+            .catch(handleError);
+    };
+
+    screenshotButton.onclick = function () {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+        // Other browsers will fall back to image/png
+        img.src = canvas.toDataURL("image/webp");
+    };
+
+
+    function handleSuccess(stream) {
+        screenshotButton.disabled = false;
+        video.srcObject = stream;
+    }
+
+    function handleError(error) {
+        console.error("Error: ", error);
+    }
+
+</script>
+
+</html>
