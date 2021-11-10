@@ -18,6 +18,7 @@ def calculate_pdf(x, normalization):
     dist = kde(space)
     if normalization:
         #dist = (dist-dist.min())/(dist.max()-dist.min())
+        #TODO has a bug
         pass
 
     return space, dist
