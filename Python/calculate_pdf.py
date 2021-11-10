@@ -17,7 +17,8 @@ def calculate_pdf(x, normalization):
     # calculate distribution
     dist = kde(space)
     if normalization:
-        dist = (dist-dist.min())/(dist.max()-dist.min())
+        #dist = (dist-dist.min())/(dist.max()-dist.min())
+        pass
 
     return space, dist
 
