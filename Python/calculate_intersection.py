@@ -8,8 +8,8 @@ import seaborn as sns
 #def
 def calculate_intersection(x1, x2):
     #estimate kernel density
-    kde1 = gaussian_kde(x1)  #, bw_method=0.5)
-    kde2 = gaussian_kde(x2)  #, bw_method=0.5)
+    kde1 = gaussian_kde(x1)
+    kde2 = gaussian_kde(x2)
 
     #generate the data
     xmin = min(x1.min(), x2.min())
@@ -17,7 +17,7 @@ def calculate_intersection(x1, x2):
     dx = 0.2 * (xmax - xmin)
     xmin -= dx
     xmax += dx
-    data = np.linspace(xmin, xmax, size)
+    data = np.linspace(xmin, xmax, len(x1))
 
     #get density with data
     kde1_x = kde1(data)
