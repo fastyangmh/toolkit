@@ -1,30 +1,46 @@
 # import
-from os.path import join, basename
-from os import makedirs, walk
-import torch
-import matplotlib.pyplot as plt
+from os import walk, makedirs
+from os.path import dirname, join
+from torchvision.datasets import mnist
+from tqdm import tqdm
+from PIL import Image
 
 # def
 
 
-def pytorch_mnist_to_png(data_path):
-    for dirpath, _, files in walk(data_path):
-        if len(list(filter(lambda x: '.pt' in x, files))) > 0:
+def pytorch_mnist_dataset_to_png(root):
+    for dirpath, _, filenames in walk(root):
+        if any(['ubyte' in v for v in filenames]):
+            dirpath = dirname(dirpath)
             break
-    for f in files:
-        stage = 'train' if 'train' in basename(f) else 'test'
-        target_path = join(data_path, 'MNIST/images/{}'.format(stage))
+    files = {
+        'train': {
+            'images': 'train-images-idx3-ubyte',
+            'labels': 'train-labels-idx1-ubyte'
+        },
+        'test': {
+            'images': 't10k-images-idx3-ubyte',
+            'labels': 't10k-labels-idx1-ubyte'
+        }
+    }
+    for stage in ['train', 'test']:
+        target_path = join(dirpath, 'images/{}'.format(stage))
         makedirs(target_path, exist_ok=True)
-        data, label = torch.load(join(dirpath, f))
-        num_data = len(data)
-        for idx in range(num_data):
-            plt.imsave(join(target_path, '{}_{}.png'.format(str(idx).zfill(
-                len(str(num_data))), label[idx])), arr=data[idx], cmap='gray', format='png')
+        images = mnist.read_image_file(
+            path=join(dirpath, 'raw/{}'.format(files[stage]['images'])))
+        labels = mnist.read_label_file(
+            path=join(dirpath, 'raw/{}'.format(files[stage]['labels'])))
+        for idx in tqdm(range(len(images))):
+            prefix = str(idx).zfill(len(str(len(images))))
+            filename = '{}_{}.png'.format(prefix, labels[idx])
+            filename = join(target_path, filename)
+            image = Image.fromarray(images[idx].numpy())
+            image.save(fp=filename)
 
 
 if __name__ == '__main__':
     # parameters
-    data_path = 'MNIST'
+    root = 'MNIST'
 
-    #
-    pytorch_mnist_to_png(data_path=data_path)
+    # convert to png
+    pytorch_mnist_dataset_to_png(root=root)
