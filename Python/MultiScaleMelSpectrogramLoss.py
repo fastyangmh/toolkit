@@ -6,8 +6,8 @@ import torchaudio
 
 #class
 class MultiScaleMelSpectrogramLoss(nn.Module):
-    def __init__(self, n_fft_list, hop_length_list, n_mels_list,
-                 sample_rate) -> None:
+    def __init__(self, n_fft_list, hop_length_list, n_mels_list, sample_rate,
+                 device) -> None:
         super().__init__()
         transforms = []
         for n_fft, hop_length, n_mels in zip(n_fft_list, hop_length_list,
@@ -17,6 +17,11 @@ class MultiScaleMelSpectrogramLoss(nn.Module):
                                                      n_fft=n_fft,
                                                      hop_length=hop_length,
                                                      n_mels=n_mels))
+            if device == 'cuda':
+                transforms[-1].spectrogram.window = transforms[
+                    -1].spectrogram.window.cuda()
+                transforms[-1].mel_scale.fb = transforms[-1].mel_scale.fb.cuda(
+                )
         self.transforms = transforms
         self.loss_function = nn.L1Loss()
 
@@ -36,6 +41,7 @@ if __name__ == '__main__':
     n_fft_list = [128, 256, 512, 1024]
     hop_length_list = [64, 128, 256, 512]
     n_mels_list = [16, 32, 64, 64]
+    device = 'cpu'
 
     #generate waveform
     real_waveform = torch.rand(size=(1, sample_rate * duration))
@@ -49,7 +55,8 @@ if __name__ == '__main__':
         n_fft_list=n_fft_list,
         hop_length_list=hop_length_list,
         n_mels_list=n_mels_list,
-        sample_rate=sample_rate)
+        sample_rate=sample_rate,
+        device=device)
 
     #calculate loss
     loss = loss_function(fake_waveform, real_waveform)
