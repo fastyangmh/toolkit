@@ -15,4 +15,5 @@ if __name__ == '__main__':
     # display
     plt.plot(time, signal)
     plt.xlabel('time')
+    plt.xlabel('amplitude')
     plt.show()

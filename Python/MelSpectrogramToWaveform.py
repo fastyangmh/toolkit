@@ -23,7 +23,7 @@ class DBToAmplitude(torchaudio.transforms.AmplitudeToDB):
 
 
 class MelSpectrogramToWaveform(nn.Module):
-    def __init__(self, n_mels, n_fft) -> None:
+    def __init__(self, n_mels, n_fft, sample_rate) -> None:
         super().__init__()
         self.transform = transforms.Compose([
             DBToAmplitude(),
