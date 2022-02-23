@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from os.path import isfile
 import cv2
+import threading
 
 # class
 
@@ -85,6 +86,19 @@ class IDSCamera:
                                         Mode=ueye.IS_SET_DM_DIB)
         self.check(result=result, info='is_SetDisplayMode')
 
+        #set multi-threading
+        self.capture_status = 'work'
+        if self.channels > 1:
+            self.image = np.zeros(shape=(self.height, self.width,
+                                         self.channels),
+                                  dtype=np.uint8)
+        else:
+            self.image = np.zeros(shape=(self.height, self.width),
+                                  dtype=np.uint8)
+        self.capture_thread = threading.Thread(target=self.get_image,
+                                               daemon=True)
+        self.capture_thread.start()
+
     def load_ini_file(self, parameter_path):
         config = configparser.ConfigParser()
         config.read(parameter_path, 'utf-8-sig')
@@ -94,26 +108,33 @@ class IDSCamera:
         assert result == ueye.IS_SUCCESS, 'the camera does not successful {}, the return code is {}.'.format(
             info, result)
 
+    def get_image(self):
+        while self.capture_status != 'release':
+            result = ueye.is_FreezeVideo(hCam=self.camera, Wait=ueye.IS_WAIT)
+            self.check(result=result, info='is_FreezeVideo')
+            image = ueye.get_data(image_mem=self.ppcMem,
+                                  x=self.width,
+                                  y=self.height,
+                                  bits=self.bitspixel,
+                                  pitch=self.lineinc,
+                                  copy=False)
+            if self.channels > 1:
+                image = np.reshape(a=image,
+                                   newshape=(self.height, self.width,
+                                             self.channels))
+                image = cv2.cvtColor(src=image, code=self.color_code)
+                image = np.array(image)
+            else:
+                image = np.reshape(a=image, newshape=(self.height, self.width))
+            self.image = image
+
     def __call__(self):
-        result = ueye.is_FreezeVideo(hCam=self.camera, Wait=ueye.IS_WAIT)
-        self.check(result=result, info='is_FreezeVideo')
-        image = ueye.get_data(image_mem=self.ppcMem,
-                              x=self.width,
-                              y=self.height,
-                              bits=self.bitspixel,
-                              pitch=self.lineinc,
-                              copy=False)
-        if self.channels > 1:
-            image = np.reshape(a=image,
-                               newshape=(self.height, self.width,
-                                         self.channels))
-            image = cv2.cvtColor(src=image, code=self.color_code)
-            image = np.array(image)
-        else:
-            image = np.reshape(a=image, newshape=(self.height, self.width))
+        image = self.image
         return image
 
     def release(self):
+        self.capture_status = 'release'
+        self.capture_thread.join()
         result = ueye.is_FreeImageMem(hCam=self.camera,
                                       pcMem=self.ppcMem,
                                       nMemId=self.pnMemId)
