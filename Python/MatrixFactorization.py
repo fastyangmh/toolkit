@@ -9,13 +9,13 @@ import numpy as np
 
 #class
 class MatrixFactorization:
-    def __init__(self, len_r, len_c, num_w_r, num_w_c, lr, max_epochs) -> None:
+    def __init__(self, len_r, len_c, num_features, lr, max_epochs) -> None:
         #parameters
         self.max_epochs = max_epochs
 
         #initilize weight
-        self.w_r = nn.Parameter(torch.randn(size=(len_r, num_w_r)))
-        self.w_c = nn.Parameter(torch.randn(size=(num_w_c, len_c)))
+        self.w_r = nn.Parameter(torch.randn(size=(len_r, num_features)))
+        self.w_c = nn.Parameter(torch.randn(size=(num_features, len_c)))
 
         #create optimizer
         self.optimizer = optim.Adam(params=[self.w_r, self.w_c], lr=lr)
@@ -50,8 +50,7 @@ if __name__ == '__main__':
     random_seed = 0
     len_r = 5
     len_c = 4
-    num_w_r = 2
-    num_w_c = 2
+    num_features = 2
     lr = 1e-1
     max_epochs = 100
 
@@ -74,8 +73,7 @@ if __name__ == '__main__':
     #create object
     obj = MatrixFactorization(len_r=len_r,
                               len_c=len_c,
-                              num_w_r=num_w_r,
-                              num_w_c=num_w_c,
+                              num_features=num_features,
                               lr=lr,
                               max_epochs=max_epochs)
 
