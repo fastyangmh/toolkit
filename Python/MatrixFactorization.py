@@ -29,17 +29,23 @@ class MatrixFactorization:
         print('predicted:\n', pd.DataFrame(np.dot(w_r, w_c).round(),
                                            dtype=int))
 
-    def fit(self, data):
+    def check_nan_index(self, data):
         row, col = data.shape
+        index = []
+        for i in range(row):
+            for j in range(col):
+                if not torch.isnan(data[i, j]):
+                    index.append((i, j))
+        self.index = index
+
+    def fit(self, data):
+        self.check_nan_index(data=data)
         for epoch in tqdm(range(self.max_epochs)):
             self.optimizer.zero_grad()
             loss = 0
-            for i in range(row):
-                for j in range(col):
-                    if not torch.isnan(data[i, j]):
-                        y_pred = torch.dot(self.w_r[i, :], self.w_c[:, j])
-                        loss += self.loss_function(y_pred=y_pred,
-                                                   y_true=data[i, j])
+            for (i, j) in self.index:
+                y_pred = torch.dot(self.w_r[i, :], self.w_c[:, j])
+                loss += self.loss_function(y_pred=y_pred, y_true=data[i, j])
             loss.backward()
             self.optimizer.step()
             print(f'epoch: {epoch+1}, loss: {loss}')
