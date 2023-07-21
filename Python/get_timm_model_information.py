@@ -13,7 +13,7 @@ class Model(LightningModule):
     def __init__(self, model_name, in_chans) -> None:
         super().__init__()
         self.model = create_model(model_name=model_name,
-                                  pretrained=True,
+                                  pretrained=False,
                                   in_chans=in_chans)
 
     def forward(self, x):
@@ -29,6 +29,9 @@ if __name__ == '__main__':
     width = 224
     height = 224
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device_name = torch.cuda.get_device_name().replace(
+        ' ', '_') if torch.cuda.is_available() else 'cpu'
+    filename = f'model_information_{device_name}.csv'
 
     #get gpu name if available
     if device == 'cuda':
@@ -49,7 +52,7 @@ if __name__ == '__main__':
         try:
             model = Model(model_name=model_name, in_chans=in_chans)
         except:
-            print(f'unknown model name: {model_name}')
+            print(f'unknow model: {model_name}')
             continue
         if device == 'cuda':
             model = model.cuda()
@@ -79,4 +82,4 @@ if __name__ == '__main__':
         'model'].map(inference_time)
 
     #save csv
-    csv.to_csv('model_information.csv', index=False)
+    csv.to_csv(filename, index=False)

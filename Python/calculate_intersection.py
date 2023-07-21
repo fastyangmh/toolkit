@@ -30,15 +30,12 @@ def calculate_intersection(x1, x2):
 
 
 if __name__ == '__main__':
-    #parameters
-    size = 1000
-
-    #generate distribution
-    x1 = np.abs(np.random.normal(loc=0, scale=0.3, size=size))
-    x2 = np.random.rand(size)
+    #
+    normal_scores=np.load('normal_scores.npy')
+    anomaly_scores=np.load('anomaly_scores.npy')
 
     #get intersection
-    x, y = calculate_intersection(x1=x1, x2=x2)
+    x, y = calculate_intersection(x1=normal_scores, x2=anomaly_scores)
 
     #plot
     sns.kdeplot(x1, label='x1')
