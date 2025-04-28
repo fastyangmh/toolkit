@@ -1,0 +1,4 @@
+imgcat
+opencv_python
+Requests
+tqdm
