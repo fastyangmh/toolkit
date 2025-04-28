@@ -16,21 +16,21 @@ DISPLAY_WIDTH = 60
 
 
 # class
-class FileDonwloader:
+class FileDownloader:
     @classmethod
     def download_to_temp(cls, url: str) -> str:
         response = requests.get(url, stream=True, timeout=TIMEOUT)
 
         if not response.ok:
             raise ValueError(
-                f"Failed to download video from {url} with status code {response.status_code}"
+                f"Failed to download file from {url} with status code {response.status_code}"
             )
 
         temp_dir = tempfile.mkdtemp(dir="/tmp")
         filename = os.path.basename(url)
         filepath = os.path.join(temp_dir, filename)
 
-        print(f"Downloading video to {filepath}")
+        print(f"Downloading file to {filepath}")
 
         with open(filepath, "wb") as file:
             for chunk in tqdm(
@@ -142,7 +142,7 @@ def main():
     print(args)
 
     if args.source.startswith("http"):
-        args.source = FileDonwloader.download_to_temp(args.source)
+        args.source = FileDownloader.download_to_temp(args.source)
 
     player = TerminalVideoPlayer()
     player.play(
