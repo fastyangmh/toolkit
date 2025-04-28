@@ -16,8 +16,9 @@ DISPLAY_WIDTH = 60
 
 
 # class
-class TerminalVideoPlayer:
-    def _download_to_temp(self, url: str) -> str:
+class FileDonwloader:
+    @classmethod
+    def download_to_temp(cls, url: str) -> str:
         response = requests.get(url, stream=True, timeout=TIMEOUT)
 
         if not response.ok:
@@ -43,10 +44,10 @@ class TerminalVideoPlayer:
 
         return filepath
 
+
+class TerminalVideoPlayer:
     def _open_video_capture(self, source: str) -> cv2.VideoCapture:
-        if source.startswith("http"):
-            source = self._download_to_temp(source)
-        elif source.isdigit():
+        if source.isdigit():
             source = int(source)  # type: ignore
 
         capture = cv2.VideoCapture(source)
@@ -72,7 +73,7 @@ class TerminalVideoPlayer:
         source: str,
         start_frame: int = 0,
         display_width: int = DISPLAY_WIDTH,
-    ):
+    ) -> None:
         capture = self._open_video_capture(source)
         capture.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
 
@@ -139,6 +140,9 @@ def parse_args():
 def main():
     args = parse_args()
     print(args)
+
+    if args.source.startswith("http"):
+        args.source = FileDonwloader.download_to_temp(args.source)
 
     player = TerminalVideoPlayer()
     player.play(
