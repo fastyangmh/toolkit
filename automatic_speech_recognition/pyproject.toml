@@ -1,0 +1,11 @@
+[project]
+name = "automatic-speech-recognition"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "mlx>=0.26.1",
+    "parakeet-mlx>=0.3.0",
+    "pytest>=8.4.0",
+]
