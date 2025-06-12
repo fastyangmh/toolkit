@@ -5,12 +5,16 @@ from unittest.mock import MagicMock, patch
 import mlx.core as mx
 from parakeet_mlx.parakeet import BaseParakeet
 
-from src.models.parakeet_asr_model import ParakeetASRModel
+from toolkit.automatic_speech_recognition.src.models.parakeet_asr_model import (
+    ParakeetASRModel,
+)
 
 
 # class
 class TestParakeetASRModel(unittest.TestCase):
-    @patch("src.models.parakeet_asr_model.from_pretrained")
+    @patch(
+        "toolkit.automatic_speech_recognition.src.models.parakeet_asr_model.from_pretrained"
+    )
     def test_init_fp32(self, mock_from_pretrained):
         mock_model = MagicMock(spec=BaseParakeet)
         mock_from_pretrained.return_value = mock_model
@@ -19,7 +23,9 @@ class TestParakeetASRModel(unittest.TestCase):
         self.assertEqual(model.model, mock_model)
         self.assertEqual(model.float_precision_type, mx.float32)
 
-    @patch("src.models.parakeet_asr_model.from_pretrained")
+    @patch(
+        "toolkit.automatic_speech_recognition.src.models.parakeet_asr_model.from_pretrained"
+    )
     def test_init_bfloat16(self, mock_from_pretrained):
         mock_model = MagicMock(spec=BaseParakeet)
         mock_from_pretrained.return_value = mock_model
@@ -28,7 +34,9 @@ class TestParakeetASRModel(unittest.TestCase):
         self.assertEqual(model.model, mock_model)
         self.assertEqual(model.float_precision_type, mx.bfloat16)
 
-    @patch("src.models.parakeet_asr_model.from_pretrained")
+    @patch(
+        "toolkit.automatic_speech_recognition.src.models.parakeet_asr_model.from_pretrained"
+    )
     def test_load_model(self, mock_from_pretrained):
         mock_model = MagicMock(spec=BaseParakeet)
         mock_from_pretrained.return_value = mock_model
@@ -41,7 +49,9 @@ class TestParakeetASRModel(unittest.TestCase):
         self.assertEqual(model, mock_model)
         mock_from_pretrained.assert_called_once_with("test-model", dtype=mx.float32)
 
-    @patch("src.models.parakeet_asr_model.from_pretrained")
+    @patch(
+        "toolkit.automatic_speech_recognition.src.models.parakeet_asr_model.from_pretrained"
+    )
     def test_load_model_called_with_correct_args(self, mock_from_pretrained):
         mock_model = MagicMock()
         mock_from_pretrained.return_value = mock_model
@@ -51,7 +61,9 @@ class TestParakeetASRModel(unittest.TestCase):
             "some-id", dtype=model.float_precision_type
         )
 
-    @patch("src.models.parakeet_asr_model.from_pretrained")
+    @patch(
+        "toolkit.automatic_speech_recognition.src.models.parakeet_asr_model.from_pretrained"
+    )
     def test_transcribe_success(self, mock_from_pretrained):
         mock_sentence = MagicMock()
         mock_sentence.text = "hello "
@@ -71,7 +83,9 @@ class TestParakeetASRModel(unittest.TestCase):
             overlap_duration=15,
         )
 
-    @patch("src.models.parakeet_asr_model.from_pretrained")
+    @patch(
+        "toolkit.automatic_speech_recognition.src.models.parakeet_asr_model.from_pretrained"
+    )
     def test_transcribe_with_custom_kwargs(self, mock_from_pretrained):
         mock_sentence = MagicMock()
         mock_sentence.text = "foo"
@@ -91,7 +105,9 @@ class TestParakeetASRModel(unittest.TestCase):
             overlap_duration=2,
         )
 
-    @patch("src.models.parakeet_asr_model.from_pretrained")
+    @patch(
+        "toolkit.automatic_speech_recognition.src.models.parakeet_asr_model.from_pretrained"
+    )
     def test_transcribe_invalid_input_type(self, mock_from_pretrained):
         mock_model = MagicMock()
         mock_from_pretrained.return_value = mock_model

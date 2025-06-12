@@ -1,0 +1,22 @@
+[project]
+name = "toolkit"
+version = "0.1.0"
+description = "A useful toolkit for various tasks"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = ["imgcat>=0.6.0", "mlx>=0.26.1", "parakeet-mlx>=0.3.0"]
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = ["ipython>=9.3.0", "pre-commit>=4.2.0", "pytest>=8.4.0"]
+
+
+[project.scripts]
+asr = "toolkit.automatic_speech_recognition.cli:main"
+fd = 'toolkit.file_downloader.cli:main'

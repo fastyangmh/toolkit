@@ -1,4 +1,0 @@
-imgcat
-Pillow
-Requests
-tqdm

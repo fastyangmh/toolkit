@@ -1,9 +1,9 @@
 # import
 from pathlib import Path
 
-from src.constants import MODELS_DIRECTORY
-from src.models.base_asr_model import BaseASRModel
-from src.utils import ClassRegisterHandler
+from toolkit.automatic_speech_recognition.src.constants import MODELS_DIRECTORY
+from toolkit.automatic_speech_recognition.src.models import BaseASRModel
+from toolkit.automatic_speech_recognition.src.utils import ClassRegisterHandler
 
 
 # class

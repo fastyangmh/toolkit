@@ -3,7 +3,7 @@ import argparse
 
 import mlx.core as mx
 
-from src import ModelFactory
+from toolkit.automatic_speech_recognition.src import ModelFactory
 
 
 # def
@@ -61,12 +61,11 @@ def main():
         },
     )
 
-    outputs = model.transcribe(inputs=args.audio_files)
+    outputs: list[str] = model.transcribe(inputs=args.audio_files)
 
-    for audio_file, output in zip(args.audio_files, outputs):
-        print(f"Transcription for {audio_file}:")
-        print(output)
-        print("-" * 40)
+    for idx, (audio_file, output) in enumerate(zip(args.audio_files, outputs)):
+        print(f"Audio file {idx + 1}: {audio_file}")
+        print(f"Transcription: {output}\n")
 
 
 if __name__ == "__main__":
