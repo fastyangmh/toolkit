@@ -4,7 +4,13 @@ version = "0.1.0"
 description = "A useful toolkit for various tasks"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = ["imgcat>=0.6.0", "mlx>=0.26.1", "parakeet-mlx>=0.3.0"]
+dependencies = [
+    "imgcat>=0.6.0",
+    "mlx>=0.26.1",
+    "opencv-python>=4.11.0.86",
+    "parakeet-mlx>=0.3.0",
+    "pillow>=11.2.1",
+]
 
 [tool.uv]
 package = true
@@ -19,4 +25,5 @@ dev = ["ipython>=9.3.0", "pre-commit>=4.2.0", "pytest>=8.4.0"]
 
 [project.scripts]
 asr = "toolkit.automatic_speech_recognition.cli:main"
-fd = 'toolkit.file_downloader.cli:main'
+fd = "toolkit.file_downloader.cli:main"
+view = "toolkit.terminal_viewer.cli:main"

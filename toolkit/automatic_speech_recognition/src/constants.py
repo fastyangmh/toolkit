@@ -2,4 +2,4 @@
 from pathlib import Path
 
 # constants
-MODELS_DIRECTORY = Path(__file__).parent.joinpath("models")
+MODELS_DIRECTORY = str(Path(__file__).parent.joinpath("models"))

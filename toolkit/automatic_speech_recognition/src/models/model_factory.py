@@ -3,7 +3,7 @@ from pathlib import Path
 
 from toolkit.automatic_speech_recognition.src.constants import MODELS_DIRECTORY
 from toolkit.automatic_speech_recognition.src.models import BaseASRModel
-from toolkit.automatic_speech_recognition.src.utils import ClassRegisterHandler
+from toolkit.class_register_handler import ClassRegisterHandler
 
 
 # class

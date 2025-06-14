@@ -4,7 +4,7 @@ import sys
 import tempfile
 import unittest
 
-from toolkit.automatic_speech_recognition.src.utils import ClassRegisterHandler
+from toolkit.class_register_handler.src import ClassRegisterHandler
 
 
 # class
@@ -39,7 +39,7 @@ class TestClassRegisterHandler(unittest.TestCase):
             with open(file_path, "w", encoding="utf-8") as f:
                 f.write(
                     (
-                        "from tests.automatic_speech_recognition.test_utils import DummyBase\n"
+                        "from tests.class_register_handler.test_class_register_handler import DummyBase\n"
                         "class DummyChild(DummyBase):\n    pass\n"
                         "class DummyOther:\n    pass"
                     )
@@ -49,7 +49,7 @@ class TestClassRegisterHandler(unittest.TestCase):
             with open(ignore_path, "w", encoding="utf-8") as f:
                 f.write(
                     (
-                        "from tests.automatic_speech_recognition.test_utils import DummyBase\n"
+                        "from tests.class_register_handler.test_class_register_handler import DummyBase\n"
                         "class DummyChildIgnore(DummyBase):\n    pass\n"
                         "class DummyOtherIgnore:\n    pass"
                     )

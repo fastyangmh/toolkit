@@ -1,0 +1,1 @@
+from toolkit.class_register_handler.src import ClassRegisterHandler

@@ -6,3 +6,4 @@ The **Toolkit** repository provides a collection of utilities designed to enhanc
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `automatic_speech_recognition` | A streamlined Automatic Speech Recognition (ASR) tool, enabling straightforward integration and efficient speech-to-text inference for diverse applications. |
 | `file_downloader`              | A versatile file downloader supporting multiple protocols, designed for efficient file retrieval and management.                                             |
+| `terminal_viewer`              | A terminal-based viewer that allows you to preview image and video files directly within the terminal.                                                       |
