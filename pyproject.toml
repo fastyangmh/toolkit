@@ -10,7 +10,9 @@ dependencies = [
     "opencv-python>=4.11.0.86",
     "parakeet-mlx>=0.3.0",
     "pillow>=11.2.1",
+    "llvmlite>=0.44.0",
 ]
+
 
 [tool.uv]
 package = true

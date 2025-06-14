@@ -901,6 +901,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "imgcat" },
+    { name = "llvmlite" },
     { name = "mlx" },
     { name = "opencv-python" },
     { name = "parakeet-mlx" },
@@ -917,6 +918,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "imgcat", specifier = ">=0.6.0" },
+    { name = "llvmlite", specifier = ">=0.44.0" },
     { name = "mlx", specifier = ">=0.26.1" },
     { name = "opencv-python", specifier = ">=4.11.0.86" },
     { name = "parakeet-mlx", specifier = ">=0.3.0" },
