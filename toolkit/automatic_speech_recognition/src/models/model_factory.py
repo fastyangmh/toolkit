@@ -2,7 +2,7 @@
 from pathlib import Path
 
 from toolkit.automatic_speech_recognition.src.constants import MODELS_DIRECTORY
-from toolkit.automatic_speech_recognition.src.models import BaseASRModel
+from toolkit.automatic_speech_recognition.src.models import BaseModel
 from toolkit.class_register_handler import ClassRegisterHandler
 
 
@@ -15,11 +15,11 @@ class ModelFactory:
             ["__init__.py", Path(__file__).name],
         )
         class_register_handler.register_from_dir(
-            path=MODELS_DIRECTORY, base_cls=BaseASRModel
+            path=MODELS_DIRECTORY, base_cls=BaseModel
         )
 
     @classmethod
-    def build(cls, model_type: str, model_info: dict) -> BaseASRModel:
+    def build(cls, model_type: str, model_info: dict) -> BaseModel:
         if model_type not in cls.registry:
             raise KeyError(
                 f"Model type '{model_type}' not found in registry. "

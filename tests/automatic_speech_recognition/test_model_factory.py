@@ -2,11 +2,11 @@
 import unittest
 from typing import Any, Sequence
 
-from toolkit.automatic_speech_recognition.src import BaseASRModel, ModelFactory
+from toolkit.automatic_speech_recognition.src import BaseModel, ModelFactory
 
 
 # class
-class DummyASRModel(BaseASRModel):
+class DummyASRModel(BaseModel):
     def __init__(self, value1: int, value2: int):
         self.value1 = value1
         self.value2 = value2

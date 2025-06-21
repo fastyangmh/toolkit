@@ -1,4 +1,4 @@
-from toolkit.automatic_speech_recognition import BaseASRModel, ModelFactory
+from toolkit.automatic_speech_recognition import BaseModel, ModelFactory
 from toolkit.class_register_handler import ClassRegisterHandler
 from toolkit.file_downloader import FileDownloader
 from toolkit.terminal_viewer import BaseViewer, ViewerFactory

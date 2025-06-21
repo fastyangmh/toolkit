@@ -5,13 +5,13 @@ import mlx.core as mx
 from parakeet_mlx import from_pretrained
 from parakeet_mlx.parakeet import BaseParakeet
 
-from toolkit.automatic_speech_recognition.src.models.base_asr_model import (
-    BaseASRModel,
+from toolkit.automatic_speech_recognition.src.models.base_model import (
+    BaseModel,
 )
 
 
 # class
-class ParakeetASRModel(BaseASRModel):
+class ParakeetModel(BaseModel):
     def __init__(self, model_id: str, use_fp32: bool) -> None:
         super().__init__()
 
