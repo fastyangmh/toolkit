@@ -3,7 +3,7 @@ from pathlib import Path
 
 from toolkit.class_register_handler import ClassRegisterHandler
 from toolkit.speech_to_text.src.constants import MODELS_DIRECTORY
-from toolkit.speech_to_text.src.models import BaseModel
+from toolkit.speech_to_text.src.models.base_model import BaseModel
 
 
 # class

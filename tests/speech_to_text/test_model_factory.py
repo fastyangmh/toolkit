@@ -2,7 +2,7 @@
 import unittest
 from typing import Any, Sequence
 
-from toolkit.speech_to_text.src import BaseModel, ModelFactory
+from toolkit.speech_to_text.src.models import BaseModel, ModelFactory
 
 
 # class
