@@ -2,11 +2,11 @@
 import unittest
 from typing import Any, Sequence
 
-from toolkit.automatic_speech_recognition.src import BaseModel, ModelFactory
+from toolkit.speech_to_text.src import BaseModel, ModelFactory
 
 
 # class
-class DummyASRModel(BaseModel):
+class DummyModel(BaseModel):
     def __init__(self, value1: int, value2: int):
         self.value1 = value1
         self.value2 = value2
@@ -18,14 +18,14 @@ class DummyASRModel(BaseModel):
 class TestModelFactory(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        ModelFactory.registry = {"dummy": DummyASRModel}
+        ModelFactory.registry = {"dummy": DummyModel}
 
     def test_build_returns_instance(self):
         model_info = {"value1": 1, "value2": 2}
 
         result = ModelFactory.build("dummy", model_info)
 
-        self.assertIsInstance(result, DummyASRModel)
+        self.assertIsInstance(result, DummyModel)
         self.assertEqual(result.value1, 1)  # type: ignore
         self.assertEqual(result.value2, 2)  # type: ignore
 
@@ -35,7 +35,7 @@ class TestModelFactory(unittest.TestCase):
 
     def test_registry_contains_dummy(self):
         self.assertIn("dummy", ModelFactory.registry)
-        self.assertIs(ModelFactory.registry["dummy"], DummyASRModel)
+        self.assertIs(ModelFactory.registry["dummy"], DummyModel)
 
 
 if __name__ == "__main__":

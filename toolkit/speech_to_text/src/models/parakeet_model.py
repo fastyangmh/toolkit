@@ -5,7 +5,7 @@ import mlx.core as mx
 from parakeet_mlx import from_pretrained
 from parakeet_mlx.parakeet import BaseParakeet
 
-from toolkit.automatic_speech_recognition.src.models.base_model import (
+from toolkit.speech_to_text.src.models.base_model import (
     BaseModel,
 )
 

@@ -26,6 +26,6 @@ dev = ["ipython>=9.3.0", "pre-commit>=4.2.0", "pytest>=8.4.0"]
 
 
 [project.scripts]
-asr = "toolkit.automatic_speech_recognition.cli:main"
+stt = "toolkit.speech_to_text.cli:main"
 fd = "toolkit.file_downloader.cli:main"
 view = "toolkit.terminal_viewer.cli:main"

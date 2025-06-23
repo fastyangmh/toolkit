@@ -3,13 +3,13 @@ import argparse
 
 import mlx.core as mx
 
-from toolkit.automatic_speech_recognition.src import ModelFactory
+from toolkit.speech_to_text.src import ModelFactory
 
 
 # def
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Automatic speech recognition inference script.",
+        description="Transcribe audio files using a speech-to-text model.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
@@ -24,14 +24,14 @@ def parse_args():
         "--model-type",
         choices=tuple(ModelFactory.registry.keys()),
         type=str,
-        default="ParakeetASRModel",
-        help="Type of the ASR model to use.",
+        default="ParakeetModel",
+        help="Type of the STT model to use.",
     )
     parser.add_argument(
         "--model-id",
         type=str,
         default="mlx-community/parakeet-tdt-0.6b-v2",
-        help="Model ID for the ASR model.",
+        help="Model ID for the STT model.",
     )
     parser.add_argument(
         "--use-fp32",
